@@ -22,7 +22,6 @@ CONF_PASSWORD = 'password'
 CONF_UNIT_OF_MEASUREMENT = 'unit_of_measurement'
 
 DATA_PERSONAL_CAPITAL = 'personalcapital_cache'
-ACCOUNTS_DATA = 'accounts'
 
 ATTR_NETWORTH = 'networth'
 ATTR_ASSETS = 'assets'
@@ -190,7 +189,7 @@ class PersonalCapitalCategorySensor(Entity):
         self._balanceName = balanceName
         self._state = None
         self._unit_of_measurement = unit_of_measurement
-        self.hass.data[ACCOUNTS_DATA] = {}
+        self.hass.data[self._productType] = {}
 
     def update(self):
         """Get the latest state of the sensor."""
@@ -205,7 +204,7 @@ class PersonalCapitalCategorySensor(Entity):
 
         for account in accounts:
             if self._productType == account.get('productType') and account.get('closeDate', '') == '':
-                self.hass.data[ACCOUNTS_DATA][account.get('name', '')] = {
+                self.hass.data[self._productType][account.get('name', '')] = {
                     "name": account.get('name', ''),
                     "firm_name": account.get('firmName', ''),
                     "logo": account.get('logoPath', ''),
@@ -238,4 +237,4 @@ class PersonalCapitalCategorySensor(Entity):
     @property
     def device_state_attributes(self):
         """Return the state attributes of the sensor."""
-        return self.hass.data[ACCOUNTS_DATA]
+        return self.hass.data[self._productType]
