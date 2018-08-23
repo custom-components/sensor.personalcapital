@@ -90,15 +90,15 @@ def continue_setup_platform(hass, config, pc, add_devices, discovery_info=None):
         hass.components.configurator.request_done(_CONFIGURING.pop("personalcapital"))
         uom = config.get(CONF_UNIT_OF_MEASUREMENT)
         add_devices([PersonalCapitalNetWorthSensor(pc, uom)], True)
-        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'BANK', 'assets', 'Assets')], True)
-        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'LIABILITIES', 'liabilities', 'Liabilities')], True)
-        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'INVESTMENT', 'investmentAccountsTotal', 'Investments')], True)
-        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'MORTGAGE', 'mortgageAccountsTotal', 'Mortgages')], True)
-        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'CASH', 'cashAccountsTotal', 'Cash')], True)
-        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'OTHER_ASSETS', 'otherAssetAccountsTotal', 'Other Assets')], True)
-        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'OTHER_LIABILITIES', 'otherLiabilitiesAccountsTotal', 'Other Liabilities')], True)
-        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'CREDIT_CARD', 'creditCardAccountsTotal', 'Credit')], True)
-        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'LOAN', 'loanAccountsTotal', 'Loans')], True)
+        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'BANK', '', 'assets', 'Assets')], True)
+        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'LIABILITIES', '', 'liabilities', 'Liabilities')], True)
+        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'INVESTMENT', '', 'investmentAccountsTotal', 'Investments')], True)
+        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'MORTGAGE', '', 'mortgageAccountsTotal', 'Mortgages')], True)
+        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'BANK', 'Cash', 'cashAccountsTotal', 'Cash')], True)
+        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'OTHER_ASSETS', '', 'otherAssetAccountsTotal', 'Other Assets')], True)
+        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'OTHER_LIABILITIES', '', 'otherLiabilitiesAccountsTotal', 'Other Liabilities')], True)
+        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'CREDIT_CARD', '', 'creditCardAccountsTotal', 'Credit')], True)
+        add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'LOAN', '', 'loanAccountsTotal', 'Loans')], True)
 
 class PersonalCapitalNetWorthSensor(Entity):
     """Representation of a personalcapital.com net worth sensor."""
@@ -180,12 +180,13 @@ class PersonalCapitalNetWorthSensor(Entity):
 class PersonalCapitalCategorySensor(Entity):
     """Representation of a personalcapital.com sensor."""
 
-    def __init__(self, hass, pc, unit_of_measurement, productType, balanceName, friendlyName):
+    def __init__(self, hass, pc, unit_of_measurement, productType, accountType, balanceName, friendlyName):
         """Initialize the sensor."""
         self.hass = hass
         self._pc = pc
         self._name = friendlyName
         self._productType = productType
+        self._accountType = accountType
         self._balanceName = balanceName
         self._state = None
         self._unit_of_measurement = unit_of_measurement
@@ -201,9 +202,12 @@ class PersonalCapitalCategorySensor(Entity):
         spData = result.json()['spData']
         self._state = spData.get(self._balanceName, 0.0)
         accounts = spData.get('accounts')
+        _LOGGER.warn(spData)
 
         for account in accounts:
-            if self._productType == account.get('productType') and account.get('closeDate', '') == '':
+            if self._productType == account.get('productType') and \
+               (self._accountType == '' or self._accountType == account.get('accountType', '')) and \
+               account.get('closeDate', '') == '':
                 self.hass.data[self._productType][account.get('name', '')] = {
                     "name": account.get('name', ''),
                     "firm_name": account.get('firmName', ''),
