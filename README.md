@@ -1,37 +1,30 @@
-## Welcome to GitHub Pages
+# sensor.personalcapital
+RSS feed custom component for Home Assistant
 
-You can use the [editor on GitHub](https://github.com/custom-components/sensor.personalcapital/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+To get started put `/custom_components/sensor/personalcapital.py` here:
+`<config directory>/custom_components/sensor/personalcapital.py`
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+**Example configuration.yaml:**
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```yaml
+sensor:
+  platform: personalcapital
+  email: iantrich@email.com
+  password: 12345
+  unit_of_measurement: CAD
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+**Configuration variables:**
 
-### Jekyll Themes
+key | description
+:--- | :---
+**platform (Required)** | `personalcapital``
+**email (Required)** | Email for personalcapital.com
+**password (Required)** | Password for personalcapital.com
+**unit_of_measurement (Optional)** | Unit of measurement for your accounts **Default** USD
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/custom-components/sensor.personalcapital/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+***
 
-### Support or Contact
+**Note: You'll get a text message with your pin code to use on the frontend to configure**
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Due to how `custom_components` are loaded, it is normal to see a `ModuleNotFoundError` error on first boot after adding this, to resolve it, restart Home-Assistant.
