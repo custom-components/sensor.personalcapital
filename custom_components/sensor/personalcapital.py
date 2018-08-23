@@ -23,9 +23,19 @@ CONF_UNIT_OF_MEASUREMENT = 'unit_of_measurement'
 
 DATA_PERSONAL_CAPITAL = 'personalcapital_cache'
 DATA = 'personalcapital_data'
-ATTR_NETWORTH = 'networth'
 
-SCAN_INTERVAL = timedelta(seconds=500)
+ATTR_NETWORTH = 'networth'
+ATTR_ASSETS = 'assets'
+ATTR_LIABILITIES = 'liabilities'
+ATTR_INVESTMENTS = 'investments'
+ATTR_MORTGAGES = 'mortgages'
+ATTR_CASH = 'cash'
+ATTR_OTHER_ASSETS = 'other_assets'
+ATTR_OTHER_LIABILITIES = 'other_liabilities'
+ATTR_CREDIT_CARDS = 'credit_cards'
+ATTR_LOANS = 'loans'
+
+SCAN_INTERVAL = timedelta(hours=1)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
@@ -44,10 +54,8 @@ def request_app_setup(hass, config, pc, add_devices, discovery_info=None):
     def personalcapital_configuration_callback(data):
         """Run when the configuration callback is called."""
         from personalcapital import PersonalCapital, RequireTwoFactorException, TwoFactorVerificationModeEnum
-
         pc.two_factor_authenticate(TwoFactorVerificationModeEnum.SMS, data.get('verification_code'))
         result = pc.authenticate_password(config.get(CONF_PASSWORD))
-        # result = 0
 
         if result == RequireTwoFactorException:
             configurator.notify_errors(_CONFIGURING['personalcapital'], "Invalid verification code")
@@ -63,7 +71,7 @@ def request_app_setup(hass, config, pc, add_devices, discovery_info=None):
     _CONFIGURING['personalcapital'] = configurator.request_config(
         'Personal Capital',
         personalcapital_configuration_callback,
-        description="Please check text and enter the verification code below",
+        description="Verification code sent to phone",
         submit_caption='Verify',
         fields=[{
             'id': 'verification_code',
@@ -71,7 +79,7 @@ def request_app_setup(hass, config, pc, add_devices, discovery_info=None):
             'type': 'string'}]
     )
 
-def setup_platform(hass, config, pc, add_devices, discovery_info=None):
+def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the Personal Capital component."""
     from personalcapital import PersonalCapital, RequireTwoFactorException, TwoFactorVerificationModeEnum
     pc = PersonalCapital()
@@ -82,7 +90,7 @@ def continue_setup_platform(hass, config, pc, add_devices, discovery_info=None):
     if "personalcapital" in _CONFIGURING:
         hass.components.configurator.request_done(_CONFIGURING.pop("personalcapital"))
         uom = config.get(CONF_UNIT_OF_MEASUREMENT)
-        add_devices([PersonalCapitalNetWorthSensor(pc, uom)])
+        add_devices([PersonalCapitalNetWorthSensor(pc, uom)], True)
 
 class PersonalCapitalNetWorthSensor(Entity):
     """Representation of a personalcapital.com net worth sensor."""
@@ -93,32 +101,37 @@ class PersonalCapitalNetWorthSensor(Entity):
         self._unit_of_measurement = unit_of_measurement
         self._state = None
         self._networth = None
+        self._assets = None
+        self._liabilities = None
+        self._investments = None
+        self._mortgages = None
+        self._cash = None
+        self._other_assets = None
+        self._other_liabilities = None
+        self._credit_cards = None
+        self._loans = None
         self.update()
 
     def update(self):
         """Get the latest state of the sensor."""
         result = self._pc.fetch('/newaccount/getAccounts')
-        _LOGGER.warn('/newaccount/getAccounts')
 
         if not result:
             return False
 
         spData = result.json()['spData']
-        networth = spData.get('networth', 0.0)
-        _LOGGER.warn(networth)
-        self._state = networth
-        self._networth = networth
-
-
-        # self._assets = self._personal_capital_data.assets
-        # self._liabilities = self._personal_capital_data.liabilities
-        # self._investments = self._personal_capital_data.investmentAccountsTotal
-        # self._mortgages = self._personal_capital_data.mortgageAccountsTotal
-        # self._cash = self._personal_capital_data.cashAccountsTotal
-        # self._otherAssets =self._personal_capital_data.otherAssetAccountsTotal
-        # self._otherLiabilities = self._personal_capital_data.otherLiabilitiesAccountsTotal
-        # self._creditCards = self._personal_capital_data.creditCardAccountsTotal
-        # self._loans = self._personal_capital_data.loanAccountsTotal
+        _LOGGER.warn(spData)
+        self._state = spData.get('networth', 0.0)
+        self._networth = spData.get('networth', 0.0)
+        self._assets = spData.get('assets', 0.0)
+        self._liabilities = spData.get('liabilities', 0.0)
+        self._investments = spData.get('investmentAccountsTotal', 0.0)
+        self._mortgages = spData.get('mortgageAccountsTotal', 0.0)
+        self._cash = spData.get('cashAccountsTotal', 0.0)
+        self._other_ssets = spData.get('otherAssetAccountsTotal', 0.0)
+        self._other_iabilities = spData.get('otherLiabilitiesAccountsTotal', 0.0)
+        self._credit_cards = spData.get('creditCardAccountsTotal', 0.0)
+        self._loans = spData.get('loanAccountsTotal', 0.0)
 
     @property
     def name(self):
@@ -145,6 +158,16 @@ class PersonalCapitalNetWorthSensor(Entity):
         """Return the state attributes of the sensor."""
         return {
             ATTR_NETWORTH: self._networth,
+            ATTR_NETWORTH: self._networth,
+            ATTR_ASSETS: self._assets,
+            ATTR_LIABILITIES: self._liabilities,
+            ATTR_INVESTMENTS: self._investments,
+            ATTR_MORTGAGES: self._mortgages,
+            ATTR_CASH: self._cash,
+            ATTR_OTHER_ASSETS: self._other_assets,
+            ATTR_OTHER_LIABILITIES: self._other_liabilities,
+            ATTR_CREDIT_CARDS: self._credit_cards,
+            ATTR_LOANS: self._loans,
         }
 
 # class AccountSensor(Entity):
