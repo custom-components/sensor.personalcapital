@@ -1,3 +1,5 @@
+# A WORK IN PROGRESS
+
 # sensor.personalcapital
 RSS feed custom component for Home Assistant
 
