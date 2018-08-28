@@ -10,7 +10,7 @@ Hey dude! Help me out for a couple of :beers: or a :coffee:!
 # A WORK IN PROGRESS
 
 # sensor.personalcapital
-Personal Capital component for Home Assistant
+Personal Capital component for [Home Assistant](https://www.home-assistant.io/)
 
 To get started put `/custom_components/sensor/personalcapital.py` here:
 `<config directory>/custom_components/sensor/personalcapital.py`
