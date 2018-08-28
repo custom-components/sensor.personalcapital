@@ -1,7 +1,7 @@
 # A WORK IN PROGRESS
 
 # sensor.personalcapital
-RSS feed custom component for Home Assistant
+Personal Capital component for Home Assistant
 
 To get started put `/custom_components/sensor/personalcapital.py` here:
 `<config directory>/custom_components/sensor/personalcapital.py`
