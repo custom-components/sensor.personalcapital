@@ -154,8 +154,9 @@ class PersonalCapitalNetWorthSensor(Entity):
         """Get the latest state of the sensor."""
         result = self._pc.fetch('/newaccount/getAccounts')
 
-        if not result:
-            return False
+        if not result or not result.json()['spHeader']['success']:
+          self._pc.login(_CACHE[CONF_EMAIL], _CACHE[CONF_PASSWORD])
+          result = self._pc.fetch('/newaccount/getAccounts')
 
         spData = result.json()['spData']
         self._state = spData.get('networth', 0.0)
@@ -225,8 +226,10 @@ class PersonalCapitalCategorySensor(Entity):
         """Get the latest state of the sensor."""
         result = self._pc.fetch('/newaccount/getAccounts')
 
-        if not result:
-            return False
+        if not result or not result.json()['spHeader']['success']:
+          self._pc.login(_CACHE[CONF_EMAIL], _CACHE[CONF_PASSWORD])
+          result = self._pc.fetch('/newaccount/getAccounts')
+
 
         spData = result.json()['spData']
         self._state = spData.get(self._balanceName, 0.0)
