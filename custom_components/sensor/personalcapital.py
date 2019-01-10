@@ -12,8 +12,9 @@ from datetime import timedelta
 from homeassistant.helpers.entity import Entity
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import (PLATFORM_SCHEMA)
+from homeassistant.util import Throttle
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 
 REQUIREMENTS = ['personalcapital==1.0.1']
 
@@ -36,6 +37,7 @@ ATTR_CREDIT = 'credit_cards'
 ATTR_LOANS = 'loans'
 
 SCAN_INTERVAL = timedelta(minutes=30)
+MIN_TIME_BETWEEN_UPDATES = timedelta(minutes=5)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
@@ -118,24 +120,25 @@ def continue_setup_platform(hass, config, pc, add_devices, discovery_info=None):
     if "personalcapital" in _CONFIGURING:
         hass.components.configurator.request_done(_CONFIGURING.pop("personalcapital"))
 
+    rest_pc = PersonalCapitalAccountData(pc)
     uom = config.get(CONF_UNIT_OF_MEASUREMENT)
-    add_devices([PersonalCapitalNetWorthSensor(pc, uom)], True)
-    add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'BANK', '', 'assets', 'Assets')], True)
-    add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'LIABILITIES', '', 'liabilities', 'Liabilities')], True)
-    add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'INVESTMENT', '', 'investmentAccountsTotal', 'Investments')], True)
-    add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'MORTGAGE', '', 'mortgageAccountsTotal', 'Mortgages')], True)
-    add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'BANK', 'Cash', 'cashAccountsTotal', 'Cash')], True)
-    add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'OTHER_ASSETS', '', 'otherAssetAccountsTotal', 'Other Assets')], True)
-    add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'OTHER_LIABILITIES', '', 'otherLiabilitiesAccountsTotal', 'Other Liabilities')], True)
-    add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'CREDIT_CARD', '', 'creditCardAccountsTotal', 'Credit')], True)
-    add_devices([PersonalCapitalCategorySensor(hass, pc, uom, 'LOAN', '', 'loanAccountsTotal', 'Loans')], True)
+    add_devices([PersonalCapitalNetWorthSensor(rest_pc, uom)], True)
+    add_devices([PersonalCapitalCategorySensor(hass, rest_pc, uom, 'BANK', '', 'assets', 'Assets')], True)
+    add_devices([PersonalCapitalCategorySensor(hass, rest_pc, uom, 'LIABILITIES', '', 'liabilities', 'Liabilities')], True)
+    add_devices([PersonalCapitalCategorySensor(hass, rest_pc, uom, 'INVESTMENT', '', 'investmentAccountsTotal', 'Investments')], True)
+    add_devices([PersonalCapitalCategorySensor(hass, rest_pc, uom, 'MORTGAGE', '', 'mortgageAccountsTotal', 'Mortgages')], True)
+    add_devices([PersonalCapitalCategorySensor(hass, rest_pc, uom, 'BANK', 'Cash', 'cashAccountsTotal', 'Cash')], True)
+    add_devices([PersonalCapitalCategorySensor(hass, rest_pc, uom, 'OTHER_ASSETS', '', 'otherAssetAccountsTotal', 'Other Assets')], True)
+    add_devices([PersonalCapitalCategorySensor(hass, rest_pc, uom, 'OTHER_LIABILITIES', '', 'otherLiabilitiesAccountsTotal', 'Other Liabilities')], True)
+    add_devices([PersonalCapitalCategorySensor(hass, rest_pc, uom, 'CREDIT_CARD', '', 'creditCardAccountsTotal', 'Credit')], True)
+    add_devices([PersonalCapitalCategorySensor(hass, rest_pc, uom, 'LOAN', '', 'loanAccountsTotal', 'Loans')], True)
 
 class PersonalCapitalNetWorthSensor(Entity):
     """Representation of a personalcapital.com net worth sensor."""
 
-    def __init__(self, pc, unit_of_measurement):
+    def __init__(self, rest, unit_of_measurement):
         """Initialize the sensor."""
-        self._pc = pc
+        self._rest = rest
         self._unit_of_measurement = unit_of_measurement
         self._state = None
         self._networth = None
@@ -152,13 +155,8 @@ class PersonalCapitalNetWorthSensor(Entity):
 
     def update(self):
         """Get the latest state of the sensor."""
-        result = self._pc.fetch('/newaccount/getAccounts')
-
-        if not result or not result.json()['spHeader']['success']:
-          self._pc.login(_CACHE[CONF_EMAIL], _CACHE[CONF_PASSWORD])
-          result = self._pc.fetch('/newaccount/getAccounts')
-
-        spData = result.json()['spData']
+        self._rest.update()
+        spData = self._rest.data.json()['spData']
         self._state = spData.get('networth', 0.0)
         self._networth = spData.get('networth', 0.0)
         self._assets = spData.get('assets', 0.0)
@@ -210,10 +208,10 @@ class PersonalCapitalNetWorthSensor(Entity):
 class PersonalCapitalCategorySensor(Entity):
     """Representation of a personalcapital.com sensor."""
 
-    def __init__(self, hass, pc, unit_of_measurement, productType, accountType, balanceName, friendlyName):
+    def __init__(self, hass, rest, unit_of_measurement, productType, accountType, balanceName, friendlyName):
         """Initialize the sensor."""
         self.hass = hass
-        self._pc = pc
+        self._rest = rest
         self._name = f'Personal Capital {friendlyName}'
         self._productType = productType
         self._accountType = accountType
@@ -224,14 +222,8 @@ class PersonalCapitalCategorySensor(Entity):
 
     def update(self):
         """Get the latest state of the sensor."""
-        result = self._pc.fetch('/newaccount/getAccounts')
-
-        if not result or not result.json()['spHeader']['success']:
-          self._pc.login(_CACHE[CONF_EMAIL], _CACHE[CONF_PASSWORD])
-          result = self._pc.fetch('/newaccount/getAccounts')
-
-
-        spData = result.json()['spData']
+        self._rest.update()
+        spData = self._rest.data.json()['spData']
         self._state = spData.get(self._balanceName, 0.0)
         accounts = spData.get('accounts')
 
@@ -273,3 +265,19 @@ class PersonalCapitalCategorySensor(Entity):
     def device_state_attributes(self):
         """Return the state attributes of the sensor."""
         return self.hass.data[self._productType]
+
+class PersonalCapitalAccountData(object):
+    """Get data from personalcapital.com"""
+
+    def __init__(self, pc):
+        self._pc = pc
+        self.data = None
+
+    @Throttle(MIN_TIME_BETWEEN_UPDATES)
+    def update(self):
+        """Get latest data from personal capital"""
+        self.data = self._pc.fetch('/newaccount/getAccounts')
+
+        if not self.data or not self.data.json()['spHeader']['success']:
+            self._pc.login(_CACHE[CONF_EMAIL], _CACHE[CONF_PASSWORD])
+            self.data = self._pc.fetch('/newaccount/getAccounts')
