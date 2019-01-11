@@ -14,7 +14,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import (PLATFORM_SCHEMA)
 from homeassistant.util import Throttle
 
-__version__ = '0.0.5'
+__version__ = '0.0.6'
 
 REQUIREMENTS = ['personalcapital==1.0.1']
 
@@ -177,6 +177,7 @@ class PersonalCapitalNetWorthSensor(Entity):
         """Get the latest state of the sensor."""
         self._rest.update()
         data = self._rest.data.json()['spData']
+        _LOGGER.error(data)
         self._state = data.get('networth', 0.0)
         self._networth = data.get('networth', 0.0)
         self._assets = data.get('assets', 0.0)
@@ -192,7 +193,7 @@ class PersonalCapitalNetWorthSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return 'Personal Capital Networth'
+        return 'PC Networth'
 
     @property
     def state(self):
@@ -241,7 +242,7 @@ class PersonalCapitalCategorySensor(Entity):
         """Initialize the sensor."""
         self.hass = hass
         self._rest = rest
-        self._name = f'Personal Capital {SENSOR_TYPES[sensor_type][3]}'
+        self._name = f'PC {SENSOR_TYPES[sensor_type][3]}'
         self._productType = SENSOR_TYPES[sensor_type][0]
         self._accountType = SENSOR_TYPES[sensor_type][1]
         self._balanceName = SENSOR_TYPES[sensor_type][2]
@@ -257,9 +258,7 @@ class PersonalCapitalCategorySensor(Entity):
         accounts = data.get('accounts')
 
         for account in accounts:
-            if self._productType == account.get('productType') and \
-               (self._accountType == '' or self._accountType == account.get('accountType', '')) and \
-               account.get('closeDate', '') == '':
+            if self._productType == account.get('productType') and account.get('closeDate', '') == '':
                 self.hass.data[self._productType][account.get('name', '')] = {
                     "name": account.get('name', ''),
                     "firm_name": account.get('firmName', ''),
