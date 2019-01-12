@@ -11,7 +11,7 @@ Hey dude! Help me out for a couple of :beers: or a :coffee:!
 Personal Capital component for [Home Assistant](https://www.home-assistant.io/)
 
 To get started put `/custom_components/sensor/personalcapital.py` here:
-`<config directory>/custom_components/sensor/personalcapital.py`
+`<config directory>/custom_components/sensor/personalcapital.py`. You can use this component with the custom [Personal Capital Lovelace card](https://github.com/custom-cards/pc-card). 
 
 **Example configuration.yaml:**
 
