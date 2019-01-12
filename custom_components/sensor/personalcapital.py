@@ -15,7 +15,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import (PLATFORM_SCHEMA)
 from homeassistant.util import Throttle
 
-__version__ = '0.0.7'
+__version__ = '0.0.8'
 
 REQUIREMENTS = ['personalcapital==1.0.1']
 
@@ -248,7 +248,6 @@ class PersonalCapitalCategorySensor(Entity):
         self._balanceName = SENSOR_TYPES[sensor_type][2]
         self._state = None
         self._unit_of_measurement = unit_of_measurement
-        self.hass.data[self._productType] = {'accounts': []}
 
     def update(self):
         """Get the latest state of the sensor."""
@@ -256,6 +255,7 @@ class PersonalCapitalCategorySensor(Entity):
         data = self._rest.data.json()['spData']
         self._state = data.get(self._balanceName, 0.0)
         accounts = data.get('accounts')
+        self.hass.data[self._productType] = {'accounts': []}
 
         for account in accounts:
             if self._productType == account.get('productType') and account.get('closeDate', '') == '':
@@ -267,7 +267,7 @@ class PersonalCapitalCategorySensor(Entity):
                     "account_type": account.get('accountType', ''),
                     "url": account.get('homeUrl', ''),
                     "currency": account.get('currency', ''),
-                    "refreshed": how_long_ago(account.get('lastRefreshed', 0)) + ' ago',
+                    "refreshed": howLongAgo(account.get('lastRefreshed', 0)) + ' ago',
                 })
 
     @property
@@ -314,7 +314,7 @@ class PersonalCapitalAccountData(object):
             self.data = self._pc.fetch('/newaccount/getAccounts')
 
 
-def how_long_ago(last_epoch):
+def howLongAgo(last_epoch):
     a = last_epoch
     b = time.time()
     c = b - a
@@ -322,8 +322,8 @@ def how_long_ago(last_epoch):
     hours = c // 3600 % 24
     minutes = c // 60 % 60
 
-    if minutes < 60:
-        return str(round(minutes)) + ' minutes'
-    if hours < 24:
+    if days > 0:
+        return str(round(days)) + ' days'
+    if hours > 0:
         return str(round(hours)) + ' hours'
-    return str(round(days)) + ' days'
+    return str(round(minutes)) + ' minutes'
