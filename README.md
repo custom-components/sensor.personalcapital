@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.0.8-green.svg?style=for-the-badge)](#) [![mantained](https://img.shields.io/maintenance/yes/2019.svg?style=for-the-badge)](#)
+[![Version](https://img.shields.io/badge/version-0.0.9-green.svg?style=for-the-badge)](#) [![mantained](https://img.shields.io/maintenance/yes/2019.svg?style=for-the-badge)](#)
 
 [![maintainer](https://img.shields.io/badge/maintainer-Ian%20Richardson%20%40iantrich-blue.svg?style=for-the-badge)](#)
 
@@ -34,7 +34,7 @@ key | description
 **email (Required)** | Email for personalcapital.com
 **password (Required)** | Password for personalcapital.com
 **unit_of_measurement (Optional)** | Unit of measurement for your accounts **Default** USD
-**monitored_categories (Optional)** | Banking categories to monitor. By default all categories are monitored. Options are `networth, assets, liabilities, investments, mortgages, cash, other_assets, other_liabilities, credit_cards, loans` 
+**monitored_categories (Optional)** | Banking categories to monitor. By default all categories are monitored. Options are `investments, mortgages, cash, other_assets, other_liabilities, credit_cards, loans` 
 ***
 
 **Note: You'll get a text message with your pin code to use on the frontend to configure**
