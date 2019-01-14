@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-0.0.9-green.svg?style=for-the-badge)](#) [![mantained](https://img.shields.io/maintenance/yes/2019.svg?style=for-the-badge)](#)
+[![Version](https://img.shields.io/badge/version-0.1.0-green.svg?style=for-the-badge)](#) [![mantained](https://img.shields.io/maintenance/yes/2019.svg?style=for-the-badge)](#)
 
 [![maintainer](https://img.shields.io/badge/maintainer-Ian%20Richardson%20%40iantrich-blue.svg?style=for-the-badge)](#)
 
@@ -11,7 +11,7 @@ Hey dude! Help me out for a couple of :beers: or a :coffee:!
 Personal Capital component for [Home Assistant](https://www.home-assistant.io/)
 
 To get started put `/custom_components/sensor/personalcapital.py` here:
-`<config directory>/custom_components/sensor/personalcapital.py`. You can use this component with the custom [Personal Capital Lovelace card](https://github.com/custom-cards/pc-card). 
+`<config directory>/custom_components/sensor/personalcapital.py`. You can use this component with the custom [Personal Capital Lovelace card](https://github.com/custom-cards/pc-card).
 
 **Example configuration.yaml:**
 
@@ -22,8 +22,8 @@ sensor:
   password: 12345
   unit_of_measurement: CAD
   monitored_categories:
-    - assets
     - investments
+    - cash
 ```
 
 **Configuration variables:**
@@ -34,7 +34,7 @@ key | description
 **email (Required)** | Email for personalcapital.com
 **password (Required)** | Password for personalcapital.com
 **unit_of_measurement (Optional)** | Unit of measurement for your accounts **Default** USD
-**monitored_categories (Optional)** | Banking categories to monitor. By default all categories are monitored. Options are `investments, mortgages, cash, other_assets, other_liabilities, credit_cards, loans` 
+**monitored_categories (Optional)** | Banking categories to monitor. By default all categories are monitored. Options are `investment, mortgage, cash, other_asset, other_liability, credit, loan` 
 ***
 
 **Note: You'll get a text message with your pin code to use on the frontend to configure**
