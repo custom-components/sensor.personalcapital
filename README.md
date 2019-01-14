@@ -22,7 +22,7 @@ sensor:
   password: 12345
   unit_of_measurement: CAD
   monitored_categories:
-    - investments
+    - investment
     - cash
 ```
 
