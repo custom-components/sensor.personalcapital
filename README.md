@@ -1,14 +1,19 @@
-[![Version](https://img.shields.io/badge/version-0.1.1-green.svg?style=for-the-badge)](#) [![mantained](https://img.shields.io/maintenance/yes/2019.svg?style=for-the-badge)](#)
+# sensor.personalcapital
+Personal Capital component for [Home Assistant](https://www.home-assistant.io/)
 
-[![maintainer](https://img.shields.io/badge/maintainer-Ian%20Richardson%20%40iantrich-blue.svg?style=for-the-badge)](#)
+[![GitHub Release][releases-shield]][releases]
+[![License][license-shield]](LICENSE.md)
+
+![Project Maintenance][maintenance-shield]
+[![GitHub Activity][commits-shield]][commits]
+
+[![Discord][discord-shield]][discord]
+[![Community Forum][forum-shield]][forum]
 
 ## Support
 Hey dude! Help me out for a couple of :beers: or a :coffee:!
 
 [![coffee](https://www.buymeacoffee.com/assets/img/custom_images/black_img.png)](https://www.buymeacoffee.com/zJtVxUAgH)
-
-# sensor.personalcapital
-Personal Capital component for [Home Assistant](https://www.home-assistant.io/)
 
 To get started put `/custom_components/personalcapital/sensor.py` here:
 `<config directory>/custom_components/personalcapital/sensor.py`. You can use this component with the custom [Personal Capital Lovelace card](https://github.com/custom-cards/pc-card).
@@ -40,3 +45,14 @@ key | description
 **Note: You'll get a text message with your pin code to use on the frontend to configure**
 
 Due to how `custom_components` are loaded, it is normal to see a `ModuleNotFoundError` error on first boot after adding this, to resolve it, restart Home-Assistant.
+
+[commits-shield]: https://img.shields.io/github/commit-activity/y/custom-components/sensor.personalcapital.svg
+[commits]: https://github.com/custom-components/sensor.personalcapital/commits/master
+[discord]: https://discord.gg/Qa5fW2R
+[discord-shield]: https://img.shields.io/discord/478094546522079232.svg
+[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg
+[forum]: https://community.home-assistant.io/t/lovelace-personal-capital-component-card/91463
+[license-shield]: https://img.shields.io/github/license/custom-components/sensor.personalcapital.svg
+[maintenance-shield]: https://img.shields.io/badge/maintainer-Ian%20Richardson%20%40iantrich-blue.svg
+[releases-shield]: https://img.shields.io/github/release/custom-components/sensor.personalcapital.svg
+[releases]: https://github.com/custom-components/sensor.personalcapital/releases
