@@ -1,0 +1,16 @@
+name: sensor.personalcapital
+description: 💵 Personal Capital component for Home Assistant
+type: component
+keywords:
+  - sensor
+  - personalcapital
+  - finance
+  - money
+  - accounts
+author:
+  name: Ian Richardson
+  email: iantrich@gmail.com
+  homepage: https://iantrich.github.io
+license: MIT
+files:
+  - custom_components/personalcapital/sensor.py
