@@ -15,8 +15,8 @@ Hey dude! Help me out for a couple of :beers: or a :coffee:!
 
 [![coffee](https://www.buymeacoffee.com/assets/img/custom_images/black_img.png)](https://www.buymeacoffee.com/zJtVxUAgH)
 
-To get started put `/custom_components/personalcapital/sensor.py` here:
-`<config directory>/custom_components/personalcapital/sensor.py`. You can use this component with the custom [Personal Capital Lovelace card](https://github.com/custom-cards/pc-card).
+To get started put `/custom_components/personalcapital/sensor.py` and `/custom_components/personalcapital/manifest.json` files in this folder:
+`<config directory>/custom_components/personalcapital/`. You can use this component with the custom [Personal Capital Lovelace card](https://github.com/custom-cards/pc-card).
 
 **Example configuration.yaml:**
 
