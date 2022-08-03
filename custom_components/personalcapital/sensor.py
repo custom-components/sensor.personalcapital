@@ -189,7 +189,7 @@ class PersonalCapitalNetWorthSensor(Entity):
         return 'mdi:coin'
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes of the sensor."""
         attributes = {
             ATTR_ASSETS: self._assets,
@@ -255,7 +255,7 @@ class PersonalCapitalCategorySensor(Entity):
         return 'mdi:coin'
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes of the sensor."""
         return self.hass.data[self._productType]
 
