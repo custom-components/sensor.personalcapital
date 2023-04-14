@@ -15,9 +15,9 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import (PLATFORM_SCHEMA)
 from homeassistant.util import Throttle
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
-REQUIREMENTS = ['personalcapital==1.0.1']
+# REQUIREMENTS = ['personalcapital==1.0.1']
 
 CONF_EMAIL = 'email'
 CONF_PASSWORD = 'password'
@@ -71,7 +71,7 @@ def request_app_setup(hass, config, pc, add_devices, discovery_info=None):
         """Run when the configuration callback is called."""
         from personalcapital import PersonalCapital, RequireTwoFactorException, TwoFactorVerificationModeEnum
         pc.two_factor_authenticate(TwoFactorVerificationModeEnum.SMS, data.get('verification_code'))
-        result = pc.authenticate_password(config.get(CONF_PASSWORD))
+        result = pc.authenticate_password(config.get(CONF_EMAIL), config.get(CONF_PASSWORD))
 
         if result == RequireTwoFactorException:
             configurator.notify_errors(_CONFIGURING['personalcapital'], "Invalid verification code")
@@ -189,7 +189,7 @@ class PersonalCapitalNetWorthSensor(Entity):
         return 'mdi:coin'
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes of the sensor."""
         attributes = {
             ATTR_ASSETS: self._assets,
@@ -255,7 +255,7 @@ class PersonalCapitalCategorySensor(Entity):
         return 'mdi:coin'
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes of the sensor."""
         return self.hass.data[self._productType]
 

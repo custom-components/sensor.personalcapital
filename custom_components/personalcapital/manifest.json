@@ -3,7 +3,11 @@
   "name": "Personal Capital",
   "documentation": "https://github.com/custom-components/sensor.personalcapital/blob/master/README.md",
   "dependencies": [],
-  "codeowners": ["@iantrich"],
-  "requirements": ["personalcapital==1.0.1"],
-  "version": "0.1.2"
+  "codeowners": [
+    "@iantrich"
+  ],
+  "requirements": [
+    "git+https://github.com/sanghviharshit/personalcapital.git@master#739fb526514d2a68dc5e95f17e3c9ee49dd90f85"
+  ],
+  "version": "0.1.3"
 }
