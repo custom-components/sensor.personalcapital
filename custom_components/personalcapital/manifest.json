@@ -7,7 +7,7 @@
     "@iantrich"
   ],
   "requirements": [
-    "git+https://github.com/sanghviharshit/personalcapital.git@master#293cf88cdaa53d0511c8da928038529459cfa8ea"
+    "git+https://github.com/sanghviharshit/personalcapital.git@master#739fb526514d2a68dc5e95f17e3c9ee49dd90f85"
   ],
   "version": "0.1.3"
 }
